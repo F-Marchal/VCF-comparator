@@ -1,3 +1,5 @@
+WORK IN PROGRESS README (Files works)
+
 # VCF-comparator
 Provide a tool to compare positions presents inside variant call format (VCF files).
 This tool provide two way of analyzing VCF files :
