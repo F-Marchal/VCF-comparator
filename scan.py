@@ -30,7 +30,7 @@ __author__ = "Marchal Florent"
 __copyright__ = "Copyright 2023, Marchal Florent"
 __credits__ = ["Marchal Florent", " Fiston-Lavier Anna-Sophie"]
 __license__ = "CC-BY-SA-4.0"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Marchal Florent"
 __email__ = "flo.marchal2002@gmail.com"
 __status__ = "Production"
@@ -224,6 +224,12 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
     :param bool quiet:          Do This program will print information during file processing ?
     :param str output_file:     A path toward a file where results can be saved. If None, results are printed
                                     intoo the consol.
+    :param bool complete_names:       Do files' names are displayed using their full path
+    :param str output_type:     'position', 'both' or 'file'. Define the type of data displayed.
+                                    'position': Variants summarization
+                                    'file': Files comparison
+                                    'both': Both Files comparison and Variants summarization
+
     """
     # Make some verification
     if not os.path.isdir(path):
@@ -236,8 +242,10 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
         raise ValueError(f"<output_type> is expected to be 'file', 'both' or 'position'. Got : {output_type}")
 
     # prepare some variables
-    str_settings = f"path='{path}';separator='{separator}';offset={offset};threshold={threshold};" 
-    str_settings += f"open_files={open_files};quiet={quiet};output_file={output_file}"
+    str_settings = f"path='{path}';separator='{separator}';offset={offset};threshold={threshold};"
+    str_settings += f"open_files={open_files};quiet={quiet};output_file={output_file};complete_names={complete_names};"
+    str_settings += f"output_type={output_type};SVersion={__version__};CVersion={compare.__version__}\n"
+
     if not quiet: print("settings : ", str_settings)
 
     # --- --- Find all vcf files --- ---
@@ -263,7 +271,7 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
     #  --- --- file Processing --- ---
     file_legend = "#GSCORE\tGF\tGM\tISCORE\tIF\tIM\tFILE\n"
-    position_legend = "#SCORE\tPOS\tGF\tGM\tOCUR\n"
+    position_legend = "#SCORE\tCHROM\tPOS\tGF\tGM\tOCUR\n"
     for groups_name, list_of_files in grouped_files.items():
         if not quiet: print(f"===== Group : '{groups_name}' ====")
 
@@ -299,12 +307,14 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
         # --- Display results ---
         # Group header
-        paragraph = (f"###{groups_name}\tglobal={round(score_dict['__MEANS__']['__MEANS__'][0], 4)}%\t"
-                     f"threshold={threshold}\toffset={offset}\tsettings={str_settings};"
-                     f"SVersion={__version__};CVersion={compare.__version__}\n")
-
+        group_header_has_been_displayed = False
+        paragraph = ""
         # --- Output scores related to files ---
         if output_type in ("file", "both"):
+            paragraph = (f"###{groups_name}\tglobal={round(score_dict['__MEANS__']['__MEANS__'][0], 4)}%\t"
+                         f"settings: {str_settings}")
+            group_header_has_been_displayed = True
+
             for paths, comparisons in score_dict.items():
                 if paths == "__MEANS__":
                     # This key is not a file. This key is used to store file's means.
@@ -330,6 +340,9 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
         # --- Output scores related to positions ---
         if output_type in ("position", "both"):
+            if group_header_has_been_displayed is False:
+                paragraph += (f"###{groups_name}\tsettings: {str_settings}")
+                group_header_has_been_displayed = True
             paragraph += position_legend
 
             # Assure that positions are displayed from the greater occurrence to the lowest.
@@ -339,7 +352,8 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
             # Display positions
             for position, (found, max_, elements) in sorted_positions:
                 elements_detail = ";".join([f"{key}={item}" for key, item in elements.items()])
-                paragraph += f"{round(found / max_ * 100, 4)}\t{position}\t{found}\t{max_}\t{elements_detail}\n"
+                chrom, pos = position
+                paragraph += f"{round(found / max_ * 100, 4)}\t{chrom}\t{pos}\t{found}\t{max_}\t{elements_detail}\n"
 
         # Output result
         if output_file:
@@ -411,6 +425,7 @@ if __name__ == "__main__":  # If this file isn't an import.
         main_output_type = sys_args[7]
     else:
         main_output_type = "position"
+        main_output_type = "file"
         
     # complete file name
     if args_length >= 9:

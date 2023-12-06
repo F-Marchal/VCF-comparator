@@ -13,7 +13,7 @@ __author__ = "Marchal Florent"
 __copyright__ = "Copyright 2023, Marchal Florent"
 __credits__ = ["Marchal Florent", " Fiston-Lavier Anna-Sophie", "Berard Severine"]
 __license__ = "CC-BY-SA-4.0"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Marchal Florent"
 __email__ = "flo.marchal2002@gmail.com"
 __status__ = "Production"
@@ -37,7 +37,6 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
         all_:       If True: None and undefined arguments are considered True
                     If False: None and undefined arguments are considered False
         parse_info: Does the column "INFO" is turned intoo a dictionary. (boolean)
-        chrom:      Do the column "CHROM" is included in the result ? (boolean)
         id_:        Do the column "ID" is included in the result ? (boolean)
         ref:        Do the column "REF" is included in the result ? (boolean)
         alt:        Do the column "ALT" is included in the result ? (boolean)
@@ -46,7 +45,7 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
         info:       Do the column "INFO" is included in the result ? (boolean)
         format_:    Do the column "FORMAT" is included in the result ? (boolean)
         samples:    Do all "SAMPLES" columns are included in the result ? (boolean) "SAMPLES" are stored inside a list.
-    :return dict: {line_position (int) : list of dict (dict from <parse_vcf_line>),
+    :return dict: {(chromosome, line_position (int)) : list of dict (dict from <parse_vcf_line>),
                    "header": list of lines inside the header,
                    "path": <path>}
     """
@@ -63,6 +62,8 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
     # The pos argument can not be passed to <line_options> by the user since this argument has to be true.
     if "pos" in line_options:
         raise TypeError("Unexpected keyword argument : 'pos'.")
+    if "chrom" in line_options:
+        raise TypeError("Unexpected keyword argument : 'chrom'.")
 
     # Start file loading.
     for i, lines in enumerate(file):
@@ -81,7 +82,7 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
         else:
             # Extract line
             try:
-                line = parse_vcf_line(lines, pos=True, **line_options)
+                line = parse_vcf_line(lines, pos=True, chrom=True, **line_options)
             except IndexError as E:
                 raise IndexError(f"{E} Line {i}")
 
@@ -90,6 +91,9 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
                 position = int(line["POS"])
             except ValueError as E:
                 raise ValueError(f"Can not turn position into an integer (line {i}, file {path}). Line ignored")
+
+            # If we forget CHROM, two position on two chromosome can be treated as if there were at the same place.
+            position = (line["CHROM"], position)
 
             # Save the results
             if position not in vcf_dictionary:
@@ -311,7 +315,8 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
             # Match finder
             for initial_pos in main_dict:  # <initial_pos> is a position without any offset
                 for j in range(-offset, offset + 1):
-                    current_pos = initial_pos + j  # <current_pos> is a position with an offset of <j>
+                    current_pos = (initial_pos[0], initial_pos[1] + j)
+                    # <current_pos> is a position with an offset of <j>
 
                     if current_pos not in second_dict:
                         # No position match with this offset.
@@ -321,6 +326,8 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
                             results = _compare_position_alt(main_dict[initial_pos], second_dict[current_pos],
                                                             sequence_threshold=sequence_threshold)
                         except KeyError as E:
+
+                            raise E
                             if not quiet:
                                 comparison_errors.append(f"Can not proceed to the comparison of the position "
                                                          f"{initial_pos} (from {main_name}) "
