@@ -22,12 +22,12 @@ A percentage is assigned to each group of vcf files. This score represent how si
 Options :
 	h) Return the help of this file
 	d) By default, files are opened during the search to verify is they are variant call format and not Vcard files and to exclude multiple sample files (wich are not supported). Use this option to turn it off.
-	v) This program not display information's during the process.
-  g) This program will only file per file score. If unspecified (and b unspecified too), position per position score is returned.
+	v) This program will display information during the process.
+  g) This program will only return file per file score. If unspecified (and b unspecified too), position per position score is returned.
   b) This program will return both file per file score and position per position score
   c) Show files with their complete path.
 
-	p) Specie a path to folder. All files inside this folder, its sub-folders, its sub-sub-folder and so on will be passed in review and all .vcf files will be used by this program. If let unspecified, ‘~’ is used.
+	p) A path to folder. All files inside this folder, its sub-folders, its sub-sub-folder and so on will be passed in review and all .vcf files will be used by this program. If let unspecified, ‘~’ is used.
 	s) A Separator that will be used to group files (can not be 'none'). If unspecified parent folder will be used to group files.
      For example with “-” as a separator:
       - a file named P15-1.vcf will be inside the group “p15”,
@@ -45,7 +45,7 @@ How this program work:
   2) Each variant call files are grouped using a separator or their parent folder (-s)
   3) Inside each groups, vcf files are compared to each others. When two files are compared, each positions of each files are passed in review.
 
-Two position are considered similar when:
+Two position (chromosome and place on this chromosome) are considered similar when:
 	- Positions are close enough : positionB ∈ [positionA - offset ; positionA + offset]
 	- Positions have at least one alteration in common. When multiple alteration are present at the same position,
 	  all combinations between the two files are test and at least one combinations has to fulfill one of the following rules :
@@ -55,31 +55,32 @@ Two position are considered similar when:
     		- The two positions have the exact same sequence (<sequence_threshold> is None)
     		- The two positions have similar enough sequence (<sequence_threshold> is an integer)
 
---- --- --- Global comparisons (g or b) --- --- ---
+--- --- --- Files comparison (g or b) --- --- ---
 Use this mod when you want to known at which extend file inside a group are to similar together.
 Two scores are given to each couple of files. The first score (GSCORE) represent how similar positions in the two files
 are and the second one to what extent positions in the first file is included in the second.
 
 The result are displayed using the following form:
 ## [File Name]	[Global score]	[inclusion Score]
-# GSCORE	GM	GL	ISCORE	IM	IL	FILE
+# GSCORE	GM	GM	ISCORE	IM	IM	FILE
 Columns meaning :
-    GSCORE  : [GM] / [GL] * 100. Represent to what degree positions inside [File Name] and [FILE] are similar.
+    GSCORE  : [GF] / [GM] * 100. Represent to what degree positions inside [File Name] and [FILE] are similar.
     GF	    : How many position inside [File Name] and [FILE] have found at least one similar position in each others.
     GM	    : How many position inside [File Name] and [FILE] exist.
-    ISCORE	: [IM] / [IL] * 100. Represent to what degree positions inside [File Name] are included inside [FILE].
+    ISCORE	: [IF] / [IM] * 100. Represent to what degree positions inside [File Name] are included inside [FILE].
     IF	    : How many position inside [File Name] have found at least one similar position [FILE].
     IM	    : How many position inside [File Name] exist.
     FILE    : The name of the file that is compared to [File Name].
 
---- --- --- Positions comparisons (default or b)--- --- ---
+--- --- --- Variants summarization (default or b)--- --- ---
 Use this mod when you want to determine a consensus of variation inside a group .
 Display a list of position sorted by similarity along with all ALT found at this place.
 
 Columns meaning :#POS SCORE GF GM OCUR
-    POS     : ALT Position.
     SCORE   : [GF] / [GM] * 100 - Percentage that represent how many file share that position (and have at least
               one match with another file).
+    CHROM   : Chromosome of this alteration
+    POS     : alteration position on this chromosome.
     GF	    : How many time this position has been found. Half score is counted if position match via an offset.
     GM	    : How many files are used
     OCUR	  : A list of alternative separated by ';'. Each alternative is linked to the number of time that this alternative was found.
