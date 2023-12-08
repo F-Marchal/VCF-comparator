@@ -4,44 +4,43 @@ This tool provide two way of analyzing VCF files :
 - By comparing files in there entirety (Files comparison).
 - By summarizing which variants of each file are the most shared (Variants summarization) (default mod).
 
-You can use this tools to solve a number of issues related to the replicas of an experience :
+You can use this tools to solve a number of issues related to the replicates of an experience :
 - Identification of aberrant replicates. (Files comparison)
 - Quick identification of SNP shared by all replicates. (Variants summarization)
 - Quick identification of Structural variations shared by all replicates. (Variants summarization)
 - Summaries of all variation present inside a number of replicates. (Variants summarization)
 - Obtain an indicator that summarize how similar two replicates are. (Files comparison)
 
-This program seek .vcf files inside a folder (`-p` or ~) and its sub folders. Files are grouped using theirs names or theirs parent folder.
-Each vcf of each group is compared with other vcf of the same group. A score of similarity is then displayed.
-See <compare.compare_replicat> to know how the score of similarity is determined.
+This program seek .vcf files inside a folder (see `-p` option) and its sub folders. Files are grouped using theirs names or theirs parent folder (see `-s` option).
+Each vcf of each group is compared with other vcf of the same group. The type of comparison depend on the option choose (see `-g` and `-b`). See “Variants summarization” and “ Files comparison” sections.
 
 In order to run this program, download `main.sh`, `scan.py` and `compare.py` inside the same directory and use `bash main.sh -h` inside a linux terminal.
 
 ## Variants summarization:
 ### Purpose and functioning
-The purpose of this mod is to sumarize the variation contained by a group of files. This is the default mod.
+The purpose of this mod is to summarize variations contained by a group of files. This is the default mod.
 
-When this mod is used the program will seek each variant of each position of each file. Each position related to a variant are displayed along with a score that represent the proportion of file that contain a variant at this position.
+When this mod is used the program will seek each variant at each position of each file. Each position related to a variant shared by at least two replicates is displayed. Each displayed line contain a score that represent the proportion of file that contain a variant at this position and some other information (see below).
 
-For each set of variant, a header mark by `###` is displayed. This header contain the name of this set of variant and various others information related to options used during when the script was executed and information about files' versions.
+For each set of variant, a header mark by `###` is displayed. This header contain the name of this set of variant and various others information related to program parameters. Those parameters includes options used when the script was executed and files' versions.
 
 Results are displayed on 6 Columns:
-- SCORE : A percentage that represent the frequency of this variant. (Is equal to GF / GM * 100)
+- SCORE : A percentage that represent the frequency of this variant. (Equal to GF / GM * 100)
 - CHROM : The chromosome that contain this variant
-- POS : The place of the variant on [CHROM]
+- POS : The place of the variant on CHROM
 - GF : A number that represent how many time this variant is found inside this set of replicates. If a variant is found due to an `offset`, this score is raised by `0.5` instead of `1`
-- GM : A number that the maximum number of times that this variant can be found inside this set of replicates.
-- OCUR : Store all variations with the following format : Variation=number of time that this variation have occured. Note that the sum off all occurrence from all variation can be greater than GM. This is due to the fact that multiple variation can be stored at a unique positon in VCF files.
+- GM : The maximum number of times that this variant can be found inside this set of replicates. (equivalent to the number of replicates)
+- OCUR : Store all variations with the following format : Variation=number of time that this variation have occured. Note that the sum off all occurrence from all variation can be greater than GM. This is due to the fact that multiple variation can be stored at a unique position in VCF files.
 
 
 ### Exploiting result
-- The greater the percentage in the SCORE column, the more a variant is shared between each replicates.
-- Multiple items in the OCUR column mean that all variant a this position does not share the same variation. (This do reduce SCORE value)
-- The greater the number associated with an alteration inside OCUR is, the more this alteration can be found inside all replicates
+- The greater the percentage in the SCORE column, the more variant  at this position are shared between each replicates.
+- Multiple items in the OCUR column mean that all variant a this position does not share the same variation. (This do reduce SCORE value.)
+- The greater the OCUR is, the more alterations at this places can be found inside all replicates
 
 Use the SCORE column to identity SNP and Structural variations shared by a significative number of replicates.
 
-All lines inside this tab represent a variant that is share by at least two replicates.
+All lines inside this tab represent at least one variant that is share by at least two replicates.
 
 ## Files comparison :
 ### Purpose and functioning
@@ -49,13 +48,13 @@ The purpose of this mod is to make the identification of aberrant file easier.
 
 You can activate this mod with the option `-e` when you call `main.sh`.
 
-When this mod is activated, the program will seek each combinations of files and look how many variants inside the first file match with varaints inside the second file. Each file have two main score attributed to them:
+When this mod is activated, the program will seek each combinations of files and look how many variants inside the first file match with variants inside the second file. Each file have two main score attributed to them:
 - A percentage of similarity (GSCORE). This represent to what extent the variants inside this files end up in other files and to what extent variants of other files end up in this file.
 - A score of inclusion (ISCORE). This score is also percentage. This percentage represent to what extent variants found inside this file can be found inside others files.
 
-At the end of the program a the mean of all GSCORE files is calculated. Furthermore, since each combinations of files is compared a local ISCORE and a local GSORE is calculated for each couple of files.
+At the end of the program a the mean of all GSCORE files is calculated. Furthermore, since each combinations of files is compared a local ISCORE and a local GSORE is calculated for each files.
 
-For each set of variant, a header mark by `###` is displayed. This header contain the name of this set of variant and various others information related to options used during when the script was executed and information about files' versions.
+For each set of variant, a header mark by `###` is displayed. This header contain the name of this set of variant and various others information related to options used when the script was executed. This include execution options and about files' versions.
 
 For each replicates a sub-header mark by `##` is displayed.  This sub-header contain the name of this replicate along with replicate’s global score (mean of all GSCORE) and with replicate’s inclusion score (mean of all ISCORE)
 
@@ -66,20 +65,21 @@ Under each replicates a tab is displayed:
 - ISCORE :  Represent to what degree positions inside this replicate are included inside FILE. Equal to IF / IM * 100.
 - IF  : How many position inside this replicate have found at least one similar variant inside FILE.
 - IM : How many position inside this replicate exist.
-- FILE : The name of the replicate that is compared to [File Name].
+- FILE : The name of the replicate that is compared to FILE.
 
 ### Exploiting result
 - Replicates with low GSCORE and high ISCORE might be replicates with a low number of positions. Those positions are likely to be contained in others replicates.
-- Replicates with a low GSCORE and low ISCORE are really different from other replicates. They may be aberrant replicates
+- Replicates with a low GSCORE and low ISCORE are really different from other replicates. They might be aberrant replicates
 - Groups with low GSCORE contain poor quality replicates and / or aberrant replicates.
-- Groups with high GSCORE  are likely to be composed of high quality replicates. 
+- Groups with high GSCORE  are likely to be composed of high quality replicates.
+- Files with hight  ISCORE are likely to be a subset of other files.
 
 # Main options
 List of options accepted by main.sh
 - h) Return the help of  main.sh
-- d) By default, files are opened during the search to verify is they are variant call format and not Vcard files and to exclude multiple sample files (wich are not supported). Use this option to turn it off.
+- d) By default, files are opened during œthe search to verify is they are variant call format and not Vcard files and to exclude multiple sample files (wich are not supported). Use this option to turn it off.
 - v) This program will display information during the process.
-- g) This program will only return Files comparison. If unspecified (and b unspecified too), position per position score is returned.
+- g) This program will only return Files comparison. If unspecified (and b unspecified too), Variants summarization score is returned.
 - b) This program will return both Files comparison score and Variants summarization.
 - c) Show files with their complete path.
 
@@ -111,10 +111,12 @@ Two position are considered similar when:
 - The function `is_variant_call_format()` is costly in time when `-d` is let unspeciefied since it require to read each line of the files. Moreover, this function only seek for columns' legends and so is quite easy to fool.
 - `scan.py` gain in usability if it could be called more easily from a linux terminal (using `getopt`) (this library was not allowed for this project).
 - It could a good idea to transform `compare_replicat()` into a generator in order to save memory.
+- Add a sort option to sort result of  Variants summarization.
 
 ## Known flaws
 - VCF with multiple samples are not supported.
 - Two position are considered  equivalent when two DEL, two INS or two DUP are at the same position with no consideration for the length or for the sequence.
+- Variant at the same position are stored together.
   
 # Dependency
 `python3` and `os` library
@@ -123,5 +125,4 @@ Two position are considered similar when:
 This project has been realized during the first semester of my master's degree in bio-informatics (Initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .VCF files. The only library authorized was `sys`, `os` and `re` and custom objects (`class`) wasn’t authorized. 
 
 Since this project was made during class, I do not think I will maintain it unless I need it or unless you contact me.
-
 
