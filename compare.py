@@ -37,13 +37,13 @@ def load_vcf_positions(path: str, keep_header: bool = False, keep_path: bool = F
         all_:       If True: None and undefined arguments are considered True
                     If False: None and undefined arguments are considered False
         parse_info: Does the column "INFO" is turned intoo a dictionary. (boolean)
-        id_:        Do the column "ID" is included in the result ? (boolean)
-        ref:        Do the column "REF" is included in the result ? (boolean)
-        alt:        Do the column "ALT" is included in the result ? (boolean)
-        qual:       Do the column "QUAL" is included in the result ? (boolean)
-        filter_:    Do the column "FILTER" is included in the result ? (boolean)
-        info:       Do the column "INFO" is included in the result ? (boolean)
-        format_:    Do the column "FORMAT" is included in the result ? (boolean)
+        id_:        Do the "ID" column is included in the result ? (boolean)
+        ref:        Do the "REF" column is included in the result ? (boolean)
+        alt:        Do the "ALT" column is included in the result ? (boolean)
+        qual:       Do the "QUAL" column is included in the result ? (boolean)
+        filter_:    Do the "FILTER" column is included in the result ? (boolean)
+        info:       Do the "INFO" column is included in the result ? (boolean)
+        format_:    Do the "FORMAT" column is included in the result ? (boolean)
         samples:    Do all "SAMPLES" columns are included in the result ? (boolean) "SAMPLES" are stored inside a list.
     :return dict: {(chromosome, line_position (int)) : list of dict (dict from <parse_vcf_line>),
                    "header": list of lines inside the header,
@@ -192,7 +192,7 @@ def parse_vcf_line_info(info: str) -> dict:
 
 
 def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: bool = True,
-                     **replicates) -> (dict[str], dict[int]):
+                     **replicates) -> (dict[str], dict[tuple[int, str]]):
     """Compare a number of replicates using their positions alterations. All replicates are compared two per two.
     A score of global similarity and a score of inclusion is given for all replicates.
     Also, a summary of which position are the most common is returned.
@@ -249,7 +249,7 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
             },
         }
         - position_dict = {
-                position (int): [number of replicates, {
+                (chromosome (str), position (int)): [number of replicates, {
                                     [ALT at these positions: occurrences (int)]
                                 }],
         }
@@ -326,8 +326,6 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
                             results = _compare_position_alt(main_dict[initial_pos], second_dict[current_pos],
                                                             sequence_threshold=sequence_threshold)
                         except KeyError as E:
-
-                            raise E
                             if not quiet:
                                 comparison_errors.append(f"Can not proceed to the comparison of the position "
                                                          f"{initial_pos} (from {main_name}) "
@@ -411,14 +409,13 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
             score_dict["__MEANS__"][second_name][1] += second_score[0] / number_of_comparison_per_replicates
             score_dict["__MEANS__"]["__MEANS__"][0] += global_result[0] / number_of_comparison
 
-            # Advance the progress bar
+            # Update the progress bar
             if not quiet:
                 total_progress += progress_per_replicate
                 old_progress = progress_bar
                 progress_bar = int(round(total_progress, 0))
                 if (number_of_new_equals := progress_bar - old_progress) != 0:
                     print("=" * number_of_new_equals, end="", flush=True)
-
 
     if not quiet:
         # End the progress bar
@@ -560,5 +557,6 @@ def seq_percent_alignment(seqA: str, seqB: str, gap: int = 3, substitution: dict
             score_del = matrix[i-1][j] + gap
             matrix[i][j] = max(score_sub, score_insert, score_del)
 
+    # Return the score
     return matrix[-1][-1] / max_score * 100
 

@@ -204,7 +204,7 @@ def group_file_by_folder(list_of_path: list[str]) -> dict[str:list[str]]:
 
 def main(path, separator: str = "", offset: int = 0, threshold: float = None, open_files: bool = True,
          quiet: bool = True, output_file: str = None,
-         complete_names: bool = False, output_type: str="position"):
+         complete_names: bool = False, output_type: str = "position"):
     """Seek .vcf files inside a folder and its sub folders. Files are groups using theirs names or theirs parent folder.
     Each vcf of each group is compared with other vcf of the same group. A score of similarity is then displayed.
     See <compare.compare_replicat> to know how the score of similarity is determined.
@@ -307,8 +307,9 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
         # --- Display results ---
         # Group header
-        group_header_has_been_displayed = False
+        group_header_has_been_displayed = False     # Assure that the header of a group is displayed only once.
         paragraph = ""
+
         # --- Output scores related to files ---
         if output_type in ("file", "both"):
             paragraph = (f"###{groups_name}\tglobal={round(score_dict['__MEANS__']['__MEANS__'][0], 4)}%\t"
@@ -341,8 +342,9 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
         # --- Output scores related to positions ---
         if output_type in ("position", "both"):
             if group_header_has_been_displayed is False:
-                paragraph += (f"###{groups_name}\tsettings: {str_settings}")
+                paragraph += f"###{groups_name}\tsettings: {str_settings}"
                 group_header_has_been_displayed = True
+
             paragraph += position_legend
 
             # Assure that positions are displayed from the greater occurrence to the lowest.
@@ -425,7 +427,6 @@ if __name__ == "__main__":  # If this file isn't an import.
         main_output_type = sys_args[7]
     else:
         main_output_type = "position"
-        main_output_type = "file"
         
     # complete file name
     if args_length >= 9:
