@@ -60,41 +60,41 @@ For each replicates a sub-header mark by `##` is displayed.  This sub-header con
 
 Under each replicates a tab is displayed:
 - GSCORE :  Represent to what degree positions inside this replicate and FILE are similar. Equal to GF / GM * 100.
-- GF : How many position inside this replicate and FILE have found at least one similar variant in each others.
-- GM : How many position inside this replicates and FILE exist.
-- ISCORE :  Represent to what degree positions inside this replicate are included inside FILE. Equal to IF / IM * 100.
+- GF : How many position inside this replicate have found at least one similar variant in FILE and vice versa.
+- GM : How many position inside this replicates and inside FILE exist.
+- ISCORE :  Represent to what degree positions inside this replicate are included inside FILE. How many position inside this replicate have found at least one similar variant in FILE. Equal to IF / IM * 100.
 - IF  : How many position inside this replicate have found at least one similar variant inside FILE.
 - IM : How many position inside this replicate exist.
-- FILE : The name of the replicate that is compared to FILE.
+- FILE : File name of the file that is compared to this replicate.
 
 ### Exploiting result
 - Replicates with low GSCORE and high ISCORE might be replicates with a low number of positions. Those positions are likely to be contained in others replicates.
 - Replicates with a low GSCORE and low ISCORE are really different from other replicates. They might be aberrant replicates
 - Groups with low GSCORE contain poor quality replicates and / or aberrant replicates.
 - Groups with high GSCORE  are likely to be composed of high quality replicates.
-- Files with hight  ISCORE are likely to be a subset of other files.
+- Files with high ISCORE are likely to be a subset of other files.
 
 # Main options
-List of options accepted by main.sh
-- h) Return the help of  main.sh
-- d) By default, files are opened during œthe search to verify is they are variant call format and not Vcard files and to exclude multiple sample files (wich are not supported). Use this option to turn it off.
-- v) This program will display information during the process.
-- g) This program will only return Files comparison. If unspecified (and b unspecified too), Variants summarization score is returned.
+List of options accepted by `main.sh`.
+- h) Return the help of `main.sh`.
+- d) By default, files are opened during the search to verify that they are variant call format and not Vcard files. This also exclude multiple sample files (which are not supported). Use this option to turn it off.
+- v) This program will display information during the process (file found, handled errors, progress bar...).
+- g) This program will only return Files comparison. If let unspecified (and `-b` unspecified too), Variants summarization is returned.
 - b) This program will return both Files comparison score and Variants summarization.
 - c) Show files with their complete path.
 
-- p) A path to folder. All files inside this folder, its sub-folders, its sub-sub-folder and so on will be passed in review and all .vcf files will be used by this program. If let unspecified, ‘~’ is used.
+- p) A path to folder. All files inside this folder, its sub-folders, its sub-sub-folder and so on will be passed in review. All .vcf files are used by this program. If let unspecified, ‘~’ is used.
 - s) A Separator that will be used to group files (can not be 'none'). If unspecified parent folder will be used to group files. Here an example with “-” as a separator:
   - a file named P15-1.vcf will be inside the group “p15”,
   - a file named P30-1.vcf will be inside the group “p30”,
   - a file named P15-1-1.vcf will be inside the group “p15”,
   - a file named -P151.vcf will be inside the group “GroupNameLessFiles”,
   - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
-- o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain alph a similarity point. Offset can not chross chromosomes.
+- o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain half a similarity point. Offset can not cross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
 - r) A path toward a file. Result of these comparisons will be stored inside this file. If unspecified result will be printed inside the console.
 
-# How comparitions works
+# How comparisons works
 A position is the emplacement of a variant inside a genome.
 Two position are considered similar when:
 - Positions are close enough : positionB ∈ [positionA - offset ; positionA + offset]
@@ -103,26 +103,26 @@ Two position are considered similar when:
   - The two positions have a INS alteration.
   - The two positions have a DUP alteration.
   - The two positions have the exact same sequence (`-t` is unspecified).
-  - The two positions have similar enough sequence (`-t` is an integer). We use a Smith-Waterman Algorithme.
+  - The two positions have similar enough sequence (`-t` is an integer). We use a Smith-Waterman Algorithm.
 
-# Programs improvment point and flaws
+# Programs improvement point and flaws
 ## Improvement point
 - The process of grouping files could be more effective if file indexing and file grouping was done at the same time.
 - The function `is_variant_call_format()` is costly in time when `-d` is let unspeciefied since it require to read each line of the files. Moreover, this function only seek for columns' legends and so is quite easy to fool.
-- `scan.py` gain in usability if it could be called more easily from a linux terminal (using `getopt`) (this library was not allowed for this project).
+- `scan.py` gain in usability if it could be called more easily from a linux terminal (using `getopt` library (this library was not allowed for this project)).
 - It could a good idea to transform `compare_replicat()` into a generator in order to save memory.
-- Add a sort option to sort result of  Variants summarization.
+- Add a sort option to sort result of Variants summarization.
+- Score matrix for the Smith-Waterman Algorithm is hard coded.
 
 ## Known flaws
 - VCF with multiple samples are not supported.
-- Two position are considered  equivalent when two DEL, two INS or two DUP are at the same position with no consideration for the length or for the sequence.
+- Two position are considered equivalent when two DEL, two INS or two DUP are at the same position with no consideration for the length or for the sequence.
 - Variant at the same position are stored together.
-  
+
 # Dependency
 `python3`, `os` and `sys` library
 
 # About this project
-This project has been realized during the first semester of my master's degree in bio-informatics (Initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .VCF files. The only library authorized was `sys`, `os` and `re` and custom objects (`class`) wasn’t authorized. 
+This project has been realized during the first semester of my master's degree in bio-informatics (initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .vcf files. The only libraries authorized were `sys`, `os` and `re`. Custom objects (`class`) wasn’t authorized. 
 
-Since this project was made during class, I do not think I will maintain it unless I need it or unless you contact me.
-
+Since this project was made during class to allow my teacher to evaluate me, I do not think I will maintain it unless I need it or unless someone ask me.
