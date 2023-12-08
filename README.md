@@ -119,7 +119,7 @@ Two position are considered similar when:
 - Variant at the same position are stored together.
   
 # Dependency
-`python3` and `os` library
+`python3`, `os` and `sys` library
 
 # About this project
 This project has been realized during the first semester of my master's degree in bio-informatics (Initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .VCF files. The only library authorized was `sys`, `os` and `re` and custom objects (`class`) wasn’t authorized. 
