@@ -86,10 +86,10 @@ List of options accepted by main.sh
 - p) A path to folder. All files inside this folder, its sub-folders, its sub-sub-folder and so on will be passed in review and all .vcf files will be used by this program. If let unspecified, ‘~’ is used.
 - s) A Separator that will be used to group files (can not be 'none'). If unspecified parent folder will be used to group files. Here an example with “-” as a separator:
   - a file named P15-1.vcf will be inside the group “p15”,
-  - a file named P30-1.vcf will be inside the group “p15”,
+  - a file named P30-1.vcf will be inside the group “p30”,
   - a file named P15-1-1.vcf will be inside the group “p15”,
-  - a file named -1.vcf will be inside the group “GroupNameLessFiles”,
-  - a file named 1.vcf will be inside the group “SeparatorLessFiles”,
+  - a file named -P151.vcf will be inside the group “GroupNameLessFiles”,
+  - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
 - o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain alph a similarity point. Offset can not chross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
 - r) A path toward a file. Result of these comparisons will be stored inside this file. If unspecified result will be printed inside the console.
