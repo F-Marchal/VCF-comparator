@@ -253,6 +253,10 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
     list_of_path = find_variant_call_format_file(path, open_files, quiet=quiet, one_sample_only=True)
     if not quiet: print(f"Indexing done : {len(list_of_path)} files found.")
 
+    if len(list_of_path) == 0:
+        print("No file found.")
+        return
+
     #  --- --- Group files --- ---
     if not quiet:
         p_sep = separator if len(separator) > 0 else "folder names"
@@ -263,12 +267,12 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
         grouped_files = group_file_by_folder(list_of_path)
     else:
         grouped_files = group_file_by_name(list_of_path, separator=separator)
-
+    
     if not quiet:
         print(f"{len(grouped_files)} Groups made :")
         for group_names, content in grouped_files.items():
             print(f"    {group_names} : {len(content)} item(s)")
-
+    
     #  --- --- file Processing --- ---
     file_legend = "#GSCORE\tGF\tGM\tISCORE\tIF\tIM\tFILE\n"
     position_legend = "#SCORE\tCHROM\tPOS\tGF\tGM\tOCUR\n"
@@ -348,11 +352,12 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
             paragraph += position_legend
 
             # Assure that positions are displayed from the greater occurrence to the lowest.
-            sorted_positions = sorted(position_dict.items(), key=lambda item: round(item[1][0] / item[1][1] * 100, 4),
+            sorted_positions = sorted(position_dict.items(), key=lambda item: round(len(item[1][0]) / item[1][1] * 100, 4),
                                       reverse=True)
 
             # Display positions
             for position, (found, max_, elements) in sorted_positions:
+                found = len(found)
                 elements_detail = ";".join([f"{key}={item}" for key, item in elements.items()])
                 chrom, pos = position
                 paragraph += f"{round(found / max_ * 100, 4)}\t{chrom}\t{pos}\t{found}\t{max_}\t{elements_detail}\n"

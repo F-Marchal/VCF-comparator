@@ -84,9 +84,11 @@ Results are displayed on 6 Columns:
   - GM : The maximum number of times that this variant can be found inside this set of replicates. (equivalent to the number of replicates)
   - OCUR : Store all variations with the following format : Variation=number of time that this variation have occured. Note that the sum off all occurrence from all variation can be greater than GM. This is due to the fact that multiple variation can be stored at a unique position in VCF files.
 "
-if [[ $# < 1]]
-then
-  echo "$module_help"; exit
+
+# Return the help when no argument are passed in.  
+if [[ $# < 1 ]]; then
+  echo "$module_help";
+  exit;
 fi
 
 folder_path=~    # Path to the folder where scan.py will search vcf files.
@@ -96,10 +98,10 @@ threshold=none   # threshold distance between two position that can be compared 
 open_files=true  # Do VCF files are opened in order to verify that they are not Vcard files.
 quiet=true       # Do information about scan and comparison advancement are displayed.
 output_file=none  # Do result are printed inside the console or write inside a file.
-output_type=position
-complete_names=false
+output_type=position  # Do this program return Variants summarization or Files comparison or both.
+complete_names=false  # Do files have their complete names when they are displayed.
 
-while getopts 'hgbdcqp:s:o:t:r:' option;
+while getopts 'hgbvdcqp:s:o:t:r:' option;
 do
   case "$option" in
   h) echo "$module_help"; exit

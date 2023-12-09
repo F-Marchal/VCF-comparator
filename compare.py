@@ -13,7 +13,7 @@ __author__ = "Marchal Florent"
 __copyright__ = "Copyright 2023, Marchal Florent"
 __credits__ = ["Marchal Florent", " Fiston-Lavier Anna-Sophie", "Berard Severine"]
 __license__ = "CC-BY-SA-4.0"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Marchal Florent"
 __email__ = "flo.marchal2002@gmail.com"
 __status__ = "Production"
@@ -343,20 +343,19 @@ def compare_replicat(offset: int = 0, sequence_threshold: float = None, quiet: b
                     # Store Positions
                     if initial_pos not in positions_dict:
                         initials_alterations = {}
-                        positions_dict[initial_pos] = [0, number_of_replicates, initials_alterations]
+                        positions_dict[initial_pos] = [set(), number_of_replicates, initials_alterations]
                     else:
                         initials_alterations = positions_dict[initial_pos][-1]
 
                     if current_pos not in positions_dict:
                         current_alterations = {}
-                        positions_dict[current_pos] = [0, number_of_replicates, current_alterations]
+                        positions_dict[current_pos] = [set(), number_of_replicates, current_alterations]
                     else:
                         current_alterations = positions_dict[current_pos][-1]
 
-                    # Give alph a point to the two position. This is used to penalize offset and to assure that even
-                    # with no offset <positions_dict[initial_pos][0]> can not be greater than <number_of_replicates>
-                    positions_dict[initial_pos][0] += 0.5
-                    positions_dict[current_pos][0] += 0.5
+                    # <positions_dict[initial_pos][0]> is a set for the same raisons as <main_match>.
+                    positions_dict[initial_pos][0].add(second_name)
+                    positions_dict[current_pos][0].add(main_name)
 
                     for alt in results:
                         if isinstance(alt, tuple):
