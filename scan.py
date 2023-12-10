@@ -322,7 +322,7 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
         # --- Output scores related to files ---
         if output_type in ("file", "both"):
-            paragraph = (f"###{groups_name}\tglobal={round(score_dict['__MEANS__']['__MEANS__'][0], 4)}%\t"
+            paragraph = (f"###{groups_name}\tglobal={round(score_dict['__MEANS__']['__MEANS__'][0], 4)}\t"
                          f"settings: {str_settings}")
             group_header_has_been_displayed = True
 
