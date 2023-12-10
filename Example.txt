@@ -1,4 +1,4 @@
-###/home/e20200005307/Bureau/VCF-comparator-1.0/Data/P15	global=48.5967%	settings: path='/home/e20200005307/Bureau/VCF-comparator-1.0';separator='';offset=10;threshold=None;open_files=True;quiet=True;output_file=/home/e20200005307/Bureau/VCF-comparator-1.0/exemple.txt;complete_names=False;output_type=both;SVersion=1.0.2;CVersion=1.0.2
+###/home/e20200005307/Bureau/VCF-comparator-1.0/Data/P15	global=48.5967	settings: path='/home/e20200005307/Bureau/VCF-comparator-1.0';separator='';offset=10;threshold=None;open_files=True;quiet=True;output_file=/home/e20200005307/Bureau/VCF-comparator-1.0/exemple.txt;complete_names=False;output_type=both;SVersion=1.0.2;CVersion=1.0.2
 ##P15-1.trimed1000.sv_sniffles.vcf	global=53.16	inclusion=78.07
 #GSCORE	GF	GM	ISCORE	IF	IM	FILE
 67.77	82	121	64.06	41	64	/home/e20200005307/Bureau/VCF-comparator-1.0/Data/P15/P15-3.trimed1000.sv_sniffles.vcf
