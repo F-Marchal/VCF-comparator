@@ -90,7 +90,7 @@ List of options accepted by `main.sh`.
   - a file named P15-1-1.vcf will be inside the group “p15”,
   - a file named -P151.vcf will be inside the group “GroupNameLessFiles”,
   - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
-- o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain half a similarity point. Offset can not cross chromosomes.
+- o) How close two position should be to be compared to each-others. By default 0 is used. Offset can not cross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
 - r) A path toward a file. Result of these comparisons will be stored inside this file. If this file exist, it will be overwright. If unspecified result will be printed inside the console.
 
@@ -120,7 +120,7 @@ Two position are considered similar when:
 - Variant at the same position are stored together.
 
 # Dependency
-`python3`, `os` and `sys` library
+`Python 3`, `os` library and `sys` library
 
 # About this project
 This project has been realized during the first semester of my master's degree in bio-informatics (initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .vcf files. The only libraries authorized were `sys`, `os` and `re`. Custom objects (`class`) wasn’t authorized. 
