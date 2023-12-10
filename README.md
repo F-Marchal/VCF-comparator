@@ -92,7 +92,7 @@ List of options accepted by `main.sh`.
   - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
 - o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain half a similarity point. Offset can not cross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
-- r) A path toward a file. Result of these comparisons will be stored inside this file. If unspecified result will be printed inside the console.
+- r) A path toward a file. Result of these comparisons will be stored inside this file. If this file exist, it will be overwright. If unspecified result will be printed inside the console.
 
 # How comparisons works
 A position is the emplacement of a variant inside a genome.

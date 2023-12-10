@@ -30,7 +30,7 @@ __author__ = "Marchal Florent"
 __copyright__ = "Copyright 2023, Marchal Florent"
 __credits__ = ["Marchal Florent", " Fiston-Lavier Anna-Sophie"]
 __license__ = "CC-BY-SA-4.0"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Marchal Florent"
 __email__ = "flo.marchal2002@gmail.com"
 __status__ = "Production"
@@ -222,7 +222,7 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
     :param bool open_files:     Does files are opened during the indexing period to identify if files are variant format
                                     call ? Use this if you have Vcard files in your computer
     :param bool quiet:          Do This program will print information during file processing ?
-    :param str output_file:     A path toward a file where results can be saved. If None, results are printed
+    :param str output_file:     A path toward a file where results can be saved. If a file allready exist, this file will be overwrite. If None, results are printed
                                     intoo the consol.
     :param bool complete_names:       Do files' names are displayed using their full path
     :param str output_type:     'position', 'both' or 'file'. Define the type of data displayed.
@@ -237,9 +237,15 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
     elif output_file is not None:
         if os.path.isdir(output_file):
             raise NameError(f"File expected for <output_file>. Got : {output_file}")
-        output_file += ".txt"
+        if output_file.split(".")[-1] != ".txt": 
+            output_file += ".txt"
     if output_type not in ("file", "both", "position"):
         raise ValueError(f"<output_type> is expected to be 'file', 'both' or 'position'. Got : {output_type}")
+
+    if output_file:
+        with open(output_file, mode="w") as file:
+            # Create a file named <output_file>.
+            pass
 
     # prepare some variables
     str_settings = f"path='{path}';separator='{separator}';offset={offset};threshold={threshold};"
@@ -364,8 +370,16 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
 
         # Output result
         if output_file:
-            with open(output_file, mode="a") as file:
-                file.write(paragraph)
+            try:
+                with open(output_file, mode="a") as file:
+                    file.write(paragraph)
+            except Exception as E:
+                print(f" --- --- --- --- Can not proceed file write : {E} --- --- --- ---")
+                print(paragraph) # Do not loose work 
+                print(f" --- --- --- --- Can not proceed file write : {E} --- --- --- ---")
+            else:
+                if not quiet:
+                    print(paragraph)
         else:
             print(paragraph)
 

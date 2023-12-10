@@ -36,7 +36,7 @@ Options :
   - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
 - o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain half a similarity point. Offset can not cross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
-- r) A path toward a file. Result of these comparisons will be stored inside this file. If unspecified result will be printed inside the console.
+- r) A path toward a file. Result of these comparisons will be stored inside this file. If a file allready exist, this file will be overwrite. If unspecified result will be printed inside the console.
 How this program work:
   1) Folders (-p) are scanned in order to find each variant call format files.
   2) Each variant call files are grouped using a separator or their parent folder (-s)
@@ -118,7 +118,7 @@ do
   ;;
   v) quiet=false
   ;;
-  r) output_file=$(readlink -e $OPTARG)
+  r) output_file=$OPTARG
   ;;
   g) output_type="file"
   ;;
