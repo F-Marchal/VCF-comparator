@@ -28,7 +28,7 @@ Results are displayed on 6 Columns:
 - SCORE : A percentage that represent the frequency of this variant. (Equal to GF / GM * 100)
 - CHROM : The chromosome that contain this variant
 - POS : The place of the variant on CHROM
-- GF : A number that represent how many time this vairant has match with another replicate.
+- GF : A number that represent how many replicates contains at least one variant that match with this variant.
 - GM : The maximum number of times that this variant can be found inside this set of replicates. (equivalent to the number of replicates)
 - OCUR : Store all variations with the following format : Variation=number of time that this variation have occured. Note that the sum off all occurrence from all variation can be greater than GM. This is due to the fact that multiple variation can be stored at a unique position in VCF files.
 
