@@ -113,6 +113,7 @@ Two position are considered similar when:
 - It could a good idea to transform `compare_replicat()` into a generator in order to save memory.
 - Add a sort option to sort result of Variants summarization.
 - Score matrix for the Smith-Waterman Algorithm is hard coded.
+- Add a “how to read output” file.
 
 ## Known flaws
 - VCF with multiple samples are not supported.
