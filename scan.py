@@ -237,8 +237,9 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
     elif output_file is not None:
         if os.path.isdir(output_file):
             raise NameError(f"File expected for <output_file>. Got : {output_file}")
-        if output_file.split(".")[-1] != ".txt": 
+        if output_file.split(".")[-1] != "txt": 
             output_file += ".txt"
+
     if output_type not in ("file", "both", "position"):
         raise ValueError(f"<output_type> is expected to be 'file', 'both' or 'position'. Got : {output_type}")
 
@@ -342,8 +343,8 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
                 paragraph += f"##{name}\tglobal={round(path_means[0], 4)}\tinclusion={round(path_means[1], 4)}\n"
                 paragraph += file_legend
 
-                # Assure that result are sorted by best score.
-                sorted_comparisons = sorted(comparisons.items(), key=lambda item: item[1][0], reverse=True)
+                # Assure that result are sorted by best GScore and by best IScore.
+                sorted_comparisons = sorted(comparisons.items(), key=lambda item: (item[1][0], item[1][3]), reverse=True)
 
                 # Display information related to each comparison
                 for second_path, results in sorted_comparisons:
@@ -358,8 +359,9 @@ def main(path, separator: str = "", offset: int = 0, threshold: float = None, op
             paragraph += position_legend
 
             # Assure that positions are displayed from the greater occurrence to the lowest.
-            sorted_positions = sorted(position_dict.items(), key=lambda item: round(len(item[1][0]) / item[1][1] * 100, 4),
-                                      reverse=True)
+            # When two position has the same occurrence, chrom and position are used.
+            sorted_positions = sorted(position_dict.items(), key=lambda item: (round(len(item[1][0]) / item[1][1] * 100, 4), item[0][0], 
+                                      -1 * item[0][1]), reverse=True)
 
             # Display positions
             for position, (found, max_, elements) in sorted_positions:

@@ -28,7 +28,7 @@ Results are displayed on 6 Columns:
 - SCORE : A percentage that represent the frequency of this variant. (Equal to GF / GM * 100)
 - CHROM : The chromosome that contain this variant
 - POS : The place of the variant on CHROM
-- GF : A number that represent how many replicates contains at least one variant that match with this variant.
+- GF : A number that represent how many replicates contain a varaiant at this position.
 - GM : The maximum number of times that this variant can be found inside this set of replicates. (equivalent to the number of replicates)
 - OCUR : Store all variations with the following format : Variation=number of time that this variation have occured. Note that the sum off all occurrence from all variation can be greater than GM. This is due to the fact that multiple variation can be stored at a unique position in VCF files.
 
@@ -90,7 +90,7 @@ List of options accepted by `main.sh`.
   - a file named P15-1-1.vcf will be inside the group “p15”,
   - a file named -P151.vcf will be inside the group “GroupNameLessFiles”,
   - a file named P15.vcf will be inside the group “SeparatorLessFiles”,
-- o) How close two position should be to be compared to each-others. By default 0 is used. Offset can not cross chromosomes.
+- o) How close two position should be to be compared to each-others. By default 0 is used. Positions that match together due to the offset gain half a similarity point. Offset can not cross chromosomes.
 - t) Integer between 0 and 100. When two sequences are compared, they must have an alignment score greater or equal to this threshold to be considered identical. If threshold is unspecified, two sequences are considered similar if they are identical.
 - r) A path toward a file. Result of these comparisons will be stored inside this file. If this file exist, it will be overwright. If unspecified result will be printed inside the console.
 
@@ -118,9 +118,10 @@ Two position are considered similar when:
 - VCF with multiple samples are not supported.
 - Two position are considered equivalent when two DEL, two INS or two DUP are at the same position with no consideration for the length or for the sequence.
 - Variant at the same position are stored together.
+- Value associated with the 'occur' column in Variants summarization has no real biological signification for now.
 
 # Dependency
-`Python 3`, `os` library and `sys` library
+`python3`, `os` and `sys` library
 
 # About this project
 This project has been realized during the first semester of my master's degree in bio-informatics (initially I’m a biologist) at the university of Montpellier (France). The goal was to make a program to compare a number .vcf files. The only libraries authorized were `sys`, `os` and `re`. Custom objects (`class`) wasn’t authorized. 
