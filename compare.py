@@ -461,7 +461,7 @@ def _compare_position_alt(main_items: list, second_items: list, sequence_thresho
             second_alt = second_variations["ALT"]
 
             # Comparison
-            if alt in ("<DEL>", "<INS>", "<DUP>") or second_alt in ("<DEL>", "<INS>", "<DUP>"): # (1)
+            if alt in ("<DEL>", "<INS>", "<DUP>", "H") or second_alt in ("<DEL>", "<INS>", "<DUP>", "H"): # (1)
                 if alt == second_alt:
                     matches.append(alt)
 
